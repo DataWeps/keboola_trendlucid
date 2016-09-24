@@ -1,7 +1,5 @@
-FROM quay.io/keboola/base-ruby:latest
+FROM ruby
 MAINTAINER Jan Mosat <mosat@weps.cz>
-
-RUN yum -y update && yum clean all
 
 WORKDIR . /home/
 

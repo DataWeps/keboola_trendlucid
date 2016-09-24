@@ -21,7 +21,7 @@ def download_file(name)
   request.run
 end
 
-CONFIG = JSON.parse(File.read("#{ENV['KBC_DATADIR']}/config.json"))
+CONFIG = JSON.parse(File.read("#{ENV['KBC_DATADIR']}/config.json"))['parameters']
 download_file('products')
 download_file('reviews')
 download_file('comments')
