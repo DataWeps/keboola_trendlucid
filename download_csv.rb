@@ -1,10 +1,9 @@
 require 'json'
-require 'fileutils'
 require 'typhoeus'
 
 def download_file(name)
   file = File.open(
-    "#{ENV['KBC_DATADIR']}/out/out.trendlucid.ex-trendlucid/#{name}", 'wb')
+    "#{ENV['KBC_DATADIR']}out/out.trendlucid.ex-trendlucid/#{name}", 'wb')
   request = Typhoeus::Request.new(
     "#{CONFIG['api_url']}/#{name}",
     userpwd: "#{CONFIG['username']}:#{CONFIG['password']}")
@@ -38,7 +37,7 @@ end
 
 begin
   CONFIG =
-    JSON.parse(File.read("#{ENV['KBC_DATADIR']}/config.json"))['parameters']
+    JSON.parse(File.read("#{ENV['KBC_DATADIR']}config.json"))['parameters']
 rescue StandardError
   Kernel.abort('No configuration file, or it is missing API parameters.')
 end
