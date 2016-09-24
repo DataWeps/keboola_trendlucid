@@ -3,7 +3,7 @@ require 'typhoeus'
 
 def download_file(name)
   file = File.open(
-    "#{ENV['KBC_DATADIR']}out/out.trendlucid.ex-trendlucid/#{name}", 'wb')
+    "#{ENV['KBC_DATADIR']}out/tables/out.trendlucid.ex-trendlucid.#{name}", 'wb')
   request = Typhoeus::Request.new(
     "#{CONFIG['api_url']}/#{name}",
     userpwd: "#{CONFIG['username']}:#{CONFIG['password']}")
@@ -25,7 +25,10 @@ def fetch_files
     begin
       download_file(file)
     rescue => exception
-      Kernel.exit(-1) unless exception.to_s == 'Request failed'
+      unless exception.to_s == 'Request failed'
+        STDERR.puts exception.message
+        Kernel.exit(-1)
+      end
       if tries == 0
         Kernel.abort("Downloading #{file} failed! Check API URL and credentials.")
       end
