@@ -3,7 +3,7 @@ require 'typhoeus'
 
 def download_file(name)
   file = File.open(
-    "#{ENV['KBC_DATADIR']}out/tables/out.trendlucid.ex-trendlucid.#{name}", 'wb')
+    "#{ENV['KBC_DATADIR']}out/tables/#{CONFIG['table_prefix']}.#{name}", 'wb')
   request = Typhoeus::Request.new(
     "#{CONFIG['api_url']}/#{name}",
     userpwd: "#{CONFIG['username']}:#{CONFIG['password']}")
