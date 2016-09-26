@@ -1,13 +1,14 @@
 require 'json'
 require 'typhoeus'
 
-TABLES = %w(products reviews comments).freeze
+TABLES = %w(products reviews shops).freeze
 API_URL = 'https://api.trendlucid.com'.freeze
+LANGUAGES = %w(com de).freeze
 
-def download_file(name)
-  file = File.open(filename(name), 'wb')
+def download_file(name, language)
+  file = File.open(filename(name, language), 'wb')
   request = Typhoeus::Request.new(
-    "#{API_URL}/#{name}",
+    "#{API_URL}/#{name}?lang=#{language}",
     userpwd: "#{CONFIG['username']}:#{CONFIG['password']}")
   request.on_headers do |response|
     raise 'Request failed' if response.code != 200
@@ -23,25 +24,31 @@ end
 
 def fetch_files
   TABLES.each do |name|
-    tries = 5
-    begin
-      download_file(name)
-    rescue => exception
-      unless exception.to_s == 'Request failed'
-        STDERR.puts exception.message
-        Kernel.exit(-1)
+    LANGUAGES.each do |language|
+      tries = 5
+      begin
+        download_file(name, language)
+      rescue => exception
+        unless exception.to_s == 'Request failed'
+          STDERR.puts "#{exception.class}: #{exception.message}"
+          STDERR.puts exception.backtrace
+          Kernel.exit(-1)
+        end
+        if tries == 0
+          Kernel.abort(
+            "Downloading #{language}_#{name} failed! "\
+            'Check API URL and credentials.'
+          )
+        end
+        tries -= 1
+        retry
       end
-      if tries == 0
-        Kernel.abort("Downloading #{name} failed! Check API URL and credentials.")
-      end
-      tries -= 1
-      retry
     end
   end
 end
 
-def filename(name)
-  "#{ENV['KBC_DATADIR']}out/tables/out.c-trendlucid.#{name}.csv"
+def filename(name, language)
+  "#{ENV['KBC_DATADIR']}out/tables/out.c-trendlucid.#{language}_#{name}.csv"
 end
 
 begin
