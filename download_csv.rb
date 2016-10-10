@@ -4,6 +4,7 @@ require 'typhoeus'
 TABLES = %w(products reviews shops).freeze
 API_URL = 'https://api.trendlucid.com'.freeze
 LANGUAGES = %w(com de).freeze
+MANIFEST = { incremental: true }.freeze
 
 def download_file(name, language)
   file = File.open(filename(name, language), 'wb')
@@ -47,6 +48,12 @@ def fetch_files
   end
 end
 
+def create_manifest
+  Dir["#{ENV['KBC_DATADIR']}out/tables/*.csv"].each do |table|
+    File.open("#{table[0..-4]}manifest", 'w') { |file| file << MANIFEST.to_json }
+  end
+end
+
 def filename(name, language)
   "#{ENV['KBC_DATADIR']}out/tables/out.c-trendlucid.#{language}_#{name}.csv"
 end
@@ -57,3 +64,4 @@ rescue StandardError
   Kernel.abort('No configuration file, or it is missing API parameters.')
 end
 fetch_files
+create_manifest
