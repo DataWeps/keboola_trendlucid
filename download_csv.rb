@@ -50,7 +50,7 @@ end
 
 def create_manifest
   Dir["#{ENV['KBC_DATADIR']}out/tables/*.csv"].each do |table|
-    File.open("#{table[0..-4]}manifest", 'w') { |file| file << MANIFEST.to_json }
+    File.open("#{table}.manifest", 'w') { |file| file << MANIFEST.to_json }
   end
 end
 
