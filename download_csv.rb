@@ -4,7 +4,7 @@ require 'typhoeus'
 TABLES = %w(products reviews shops).freeze
 API_URL = 'https://api.trendlucid.com'.freeze
 LANGUAGES = %w(com de).freeze
-MANIFEST = { incremental: true }.freeze
+MANIFEST = { incremental: true, primary_key: %w(id) }.freeze
 
 def download_file(name, language)
   file = File.open(filename(name, language), 'wb')
