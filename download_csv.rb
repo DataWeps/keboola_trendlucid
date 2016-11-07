@@ -8,9 +8,12 @@ MANIFEST = { incremental: true, primary_key: %w(id) }.freeze
 
 def download_file(name, language)
   file = File.open(filename(name, language), 'wb')
+  url = "#{API_URL}/#{name}?lang=#{language}"
+  url += '&all=true' if CONFIG['all']
   request = Typhoeus::Request.new(
-    "#{API_URL}/#{name}?lang=#{language}",
-    userpwd: "#{CONFIG['username']}:#{CONFIG['password']}")
+    url,
+    userpwd: "#{CONFIG['username']}:#{CONFIG['password']}"
+  )
   request.on_headers do |response|
     raise 'Request failed' if response.code != 200
   end
